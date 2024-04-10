@@ -4,69 +4,55 @@ const App = () => {
   const [tasks, setTasks] = useState([]);
   const [title, setTitle] = useState("");
 
-  const submitHandler = (e) => {
+  const submitHandlar = (e) => {
     e.preventDefault();
-    if (!title.trim()) return; // Prevent submitting empty task
-    const newTask = { id: Date.now(), title, completed: false };
-    setTasks([...tasks, newTask]);
+    const newTasks = { title, completed: false };
+    console.log(newTasks);
+
+    const copyTasks = [...tasks];
+    copyTasks.push(newTasks);
+    setTasks(copyTasks);
     setTitle("");
   };
-
-  const deleteTask = (taskId) => {
-    const updatedTasks = tasks.filter(task => task.id !== taskId);
-    setTasks(updatedTasks);
-  };
-
-  const toggleTaskCompletion = (taskId) => {
-    const updatedTasks = tasks.map(task => {
-      if (task.id === taskId) {
-        return { ...task, completed: !task.completed };
-      }
-      return task;
+  let taskRender = <h1 className="font-semibold text-">No Task Present</h1>;
+  if (tasks.length > 0) {
+    taskRender = tasks.map((task, index) => {
+      return (
+        <li key={index} className="bg-gray-100 p-3 rounded-md my-2 flex justify-between">
+          {task.title}
+          <div className="">
+          <i className="gap-6 cursor-pointer ri-edit-fill"></i>
+          <i className="cursor-pointer text-[#FF5635] text-1xl ri-delete-bin-7-fill"></i>
+          </div>
+        </li>
+      );
     });
-    setTasks(updatedTasks);
-  };
-
-  const taskRender = tasks.length > 0 ? (
-    tasks.map(task => (
-      <li key={task.id} className={`flex items-center justify-between border-b border-gray-200 py-3 px-4 ${task.completed ? 'line-through text-gray-400' : 'text-gray-900'}`}>
-        <span>{task.title}</span>
-        <div>
-          <button className="text-sm text-red-600 mr-2" onClick={() => deleteTask(task.id)}><i className="ri-delete-bin-7-fill"></i></button>
-          <button className="text-sm text-blue-600" onClick={() => toggleTaskCompletion(task.id)}><i className="ri-edit-fill"></i></button>
-        </div>
-      </li>
-    ))
-  ) : (
-    <li className="text-gray-500 py-3 px-4">No tasks present</li>
-  );
-
+  }
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Todo List</h2>
+    <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center">
+      <div className="w-[30%] shadow-lg shadow-gray-500/50 flex items-center justify-center gap-6 rounded-[35px]">
+        <h1 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Todo list
+        </h1>
+        <div className="w-[10vw] h-[10vw] rounded-full shadow-lg shadow-gray-500/50 ml-12">
+          <h2 className="text-center mt-12">Write task</h2>
+        </div>
       </div>
-
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form onSubmit={submitHandler}>
-            <div>
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
-              <div className="mt-1">
-                <input type="text" name="title" id="title" value={title} onChange={(e) => setTitle(e.target.value)} className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" />
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Add Task
-              </button>
-            </div>
+          <form onSubmit={submitHandlar} className="flex">
+            <input
+              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+              placeholder="Enter the title"
+              type="text"
+              name="title"
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <button className="bg-red-100 ml-8 p-2 rounded-md"><i className="bg-[#FF5631] text-white ri-add-line"></i></button>
           </form>
-
-          <ul className="mt-8 divide-y divide-gray-200">
-            {taskRender}
-          </ul>
+          <ul className="mt-8 divide-y divide-gray-200">{taskRender}</ul>
         </div>
       </div>
     </div>
