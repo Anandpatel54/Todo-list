@@ -2,73 +2,70 @@ import { useState } from "react";
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
-
   const [title, setTitle] = useState("");
+
   const submitHandler = (e) => {
     e.preventDefault();
-    const newtasks = { title, completed: false };
-    console.log(newtasks);
-
-    const copytasks = [...tasks];
-    copytasks.push(newtasks);
-    setTasks(copytasks);
+    if (!title.trim()) return; // Prevent submitting empty task
+    const newTask = { id: Date.now(), title, completed: false };
+    setTasks([...tasks, newTask]);
     setTitle("");
-
-    // setTasks([...tasks, newtasks]);
   };
 
-  let taskrender = <h1 className="text-white">No Task Present</h1>;
-  if (tasks.length > 0) {
-    taskrender = tasks.map((task, index) => {
-      return (
-        <li className="text-[#CDBEA4]" key={index}>
-          {task.title}
-          <i className="text-[#CDBEA4] ri-file-edit-line"></i>
-          <i className="text-[#CDBEA4] ri-delete-bin-7-fill"></i>
-        </li>
-      );
+  const deleteTask = (taskId) => {
+    const updatedTasks = tasks.filter(task => task.id !== taskId);
+    setTasks(updatedTasks);
+  };
+
+  const toggleTaskCompletion = (taskId) => {
+    const updatedTasks = tasks.map(task => {
+      if (task.id === taskId) {
+        return { ...task, completed: !task.completed };
+      }
+      return task;
     });
-  }
+    setTasks(updatedTasks);
+  };
+
+  const taskRender = tasks.length > 0 ? (
+    tasks.map(task => (
+      <li key={task.id} className={`flex items-center justify-between border-b border-gray-200 py-3 px-4 ${task.completed ? 'line-through text-gray-400' : 'text-gray-900'}`}>
+        <span>{task.title}</span>
+        <div>
+          <button className="text-sm text-red-600 mr-2" onClick={() => deleteTask(task.id)}><i className="ri-delete-bin-7-fill"></i></button>
+          <button className="text-sm text-blue-600" onClick={() => toggleTaskCompletion(task.id)}><i className="ri-edit-fill"></i></button>
+        </div>
+      </li>
+    ))
+  ) : (
+    <li className="text-gray-500 py-3 px-4">No tasks present</li>
+  );
 
   return (
-    <div className="w-full h-screen bg-[#CDBEA4] flex justify-center items-center">
-      <div className="w-[90%] h-[85%] bg-[#0D0D0D] rounded-xl">
-        <div className="header w-full h-[10%] p-12">
-          <div className="flex justify-between cursor-pointer">
-            <h1 className="text-[#cdbea4] text-2xl">
-              XERO<span className="text-[#FF5530]">TODO</span>
-            </h1>
-            <i className="text-[#cdbea4] text-2xl ri-file-transfer-line"></i>
-          </div>
-          <div className="flex justify-center gap-2 items-center w-[25%] h-[25%] absolute top-1/3 left-1/2 border-2 -translate-y-1/2 -translate-x-1/2 rounded-[25px] border-[#243c5a]">
-            <h1 className="text-white ">
-              <span className="text-[#CDBEA4] text-2xl font-semibold">
-                Todo Done <br /> keep it up
-              </span>
-            </h1>
-            <div className="w-32 h-32 bg-[#FF5631] rounded-full text-white">
-              <h1 className="absolute top-[47.4%] left-[68%] -translate-y-1/2 -translate-x-1/2 text-black text-3xl font-semibold">
-                1/3
-              </h1>
+    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Todo List</h2>
+      </div>
+
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <form onSubmit={submitHandler}>
+            <div>
+              <label htmlFor="title" className="block text-sm font-medium text-gray-700">Title</label>
+              <div className="mt-1">
+                <input type="text" name="title" id="title" value={title} onChange={(e) => setTitle(e.target.value)} className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md" />
+              </div>
             </div>
-          </div>
-          <form
-            onSubmit={submitHandler}
-            className="absolute top-1/2 left-[40%]"
-          >
-            <input
-              className="p-1"
-              type="text"
-              placeholder="Enter Title"
-              onChange={(e) => setTitle(e.target.value)}
-              value={title}
-            />
-            <button className="bg-[#FF5530] ml-4 rounded-full">
-              <i className="text-4xl ri-add-circle-fill"></i>
-            </button>
+
+            <div className="mt-6">
+              <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Add Task
+              </button>
+            </div>
           </form>
-          <ul className="list-none absolute top-[58%] left-[45%]">
-            {taskrender}
+
+          <ul className="mt-8 divide-y divide-gray-200">
+            {taskRender}
           </ul>
         </div>
       </div>
