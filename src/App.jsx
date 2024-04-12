@@ -1,60 +1,67 @@
 import { useState } from "react";
 
 const App = () => {
-  const [tasks, setTasks] = useState([]);
-  const [title, setTitle] = useState("");
+  const [tasks, setTasks] = useState([
+    { title: "Task 1", completed: false },
+    { title: "Task 2", completed: true },
 
-  const submitHandlar = (e) => {
-    e.preventDefault();
-    const newTasks = { title, completed: false };
-    console.log(newTasks);
+  ]);
 
-    const copyTasks = [...tasks];
-    copyTasks.push(newTasks);
-    setTasks(copyTasks);
-    setTitle("");
-  };
-  let taskRender = <h1 className="font-semibold text-">No Task Present</h1>;
-  if (tasks.length > 0) {
-    taskRender = tasks.map((task, index) => {
-      return (
-        <li key={index} className="bg-gray-100 p-3 rounded-md my-2 flex justify-between">
-          {task.title}
-          <div className="">
-          <i className="gap-6 cursor-pointer ri-edit-fill"></i>
-          <i className="cursor-pointer text-[#FF5635] text-1xl ri-delete-bin-7-fill"></i>
-          </div>
-        </li>
-      );
-    });
+  const completeTaskToggle = (e, i) =>{
+   e.target.classList.toggle("bg-green-500")
+   e.target.classList.toggle("border")
+   e.target.nextSibling.classList.toggle("line-through")
+   
   }
+
+  let tasksrander = (
+    <h1 className="text-center font-extrabold text-2xl text-orange-500">No pending Task....</h1>
+  )
+  if(tasks.length > 0){
+    tasksrander = tasks.map((task, index)=>{
+      return(
+        <li key={index} className="mb-5 flex justify-between items-center border rounded-xl p-5">
+        <div className="flex items-center">
+          <div onClick={(e) => completeTaskToggle(e, index)} className="cursor-pointer mr-4 rounded-full w-[30px] h-[30px] border border-orange-500"></div>
+          <h1 className="cursor-pointer text-2xl font-extrabold text-yellow-100">
+            {task.title}
+          </h1>
+        </div>
+        <div className="flex gap-3 text-2xl text-yellow-100">
+          <i className="cursor-pointer ri-file-edit-line"></i>
+          <i className="cursor-pointer ri-delete-bin-3-line"></i>
+        </div>
+      </li>
+      
+      )
+
+    })
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center items-center">
-      <div className="w-[30%] shadow-lg shadow-gray-500/50 flex items-center justify-center gap-6 rounded-[35px]">
-        <h1 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Todo list
-        </h1>
-        <div className="w-[10vw] h-[10vw] rounded-full shadow-lg shadow-gray-500/50 ml-12">
-          <h2 className="text-center mt-12">Write task</h2>
+    <div className="border-t-2 w-screen h-screen bg-zinc-800 flex items-center flex-col">
+      <div className="mt-[7%] w-[35%] h-[25%] border rounded-3xl flex justify-around items-center">
+        <div className="text-yellow-100">
+          <h1 className="text-3xl font-bold">LETS TODO</h1>
+          <p>Keeps doing things</p>
+        </div>
+        <div className="text-4xl font- extrabold w-[150px] h-[150px] bg-orange-600 rounded-full flex items-center justify-center">
+          1/3
         </div>
       </div>
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form onSubmit={submitHandlar} className="flex">
-            <input
-              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
-              placeholder="Enter the title"
-              type="text"
-              name="title"
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-            <button className="bg-red-100 ml-8 p-2 rounded-md"><i className="bg-[#FF5631] text-white ri-add-line"></i></button>
-          </form>
-          <ul className="mt-8 divide-y divide-gray-200">{taskRender}</ul>
-        </div>
-      </div>
+      {/*  */}
+      <form className="w-[35%] flex justify-between px-5 my-[2%]">
+        <input
+          className="px-5 py-3 text-yellow-100 outline-none w-[85%] rounded-xl bg-zinc-700"
+          type="text"
+          placeholder="write your next task"
+        />
+        <button className="outline-none text-4xl  font-extrabold flex justify-center items-center w-[50px] h-[50px] rounded-full bg-orange-600">
+          <i className="ri-add-fill"></i>
+        </button>
+      </form>
+      {/*  */}
+      <ul className="list-none w-[35%]">{tasksrander}</ul> 
     </div>
   );
 };
